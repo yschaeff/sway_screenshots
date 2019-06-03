@@ -34,9 +34,10 @@ else
     grim -g "$(eval echo $CHOICE)" "$FILENAME"
 fi
 
-wl-copy < $FILENAME
-feh $FILENAME
+
 if [ $DUNST ]; then
     notify-send "Screenshot" "File saved as $FILENAME\nand copied to clipboard" -t 6000 -i $FILENAME
 fi
+wl-copy < $FILENAME
+feh $FILENAME
 
