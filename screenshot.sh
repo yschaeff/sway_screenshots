@@ -10,10 +10,16 @@ fullscreen
 region
 focused
 $WINDOWS
+record-builtin
+record-external
+record-region
+record-focused
+record-stop
 EOF`
 
 
 FILENAME="$(xdg-user-dir PICTURES)/screenshots/$(date +'%Y-%m-%d-%H%M%S_screenshot.png')"
+RECORDING="$(xdg-user-dir PICTURES)/screenshots/$(date +'%Y-%m-%d-%H%M%S_recording.mp4')"
 
 if [ "$CHOICE" = fullscreen ]
 then
@@ -24,6 +30,29 @@ then
 elif [ "$CHOICE" = focused ]
 then
     grim -g "$(eval echo $FOCUSED)" "$FILENAME"
+elif [ "$CHOICE" = 'record-builtin' ]
+then
+    /home/yuri/repo/third-party/wf-recorder/build/wf-recorder -o eDP-1 -f "$RECORDING"
+    REC=1
+elif [ "$CHOICE" = 'record-external' ]
+then
+    /home/yuri/repo/third-party/wf-recorder/build/wf-recorder -o DP-1 -f "$RECORDING"
+    REC=1
+elif [ "$CHOICE" = 'record-region' ]
+then
+    /home/yuri/repo/third-party/wf-recorder/build/wf-recorder -g "$(slurp)" -f "$RECORDING"
+    REC=1
+elif [ "$CHOICE" = 'record-focused' ]
+then
+    /home/yuri/repo/third-party/wf-recorder/build/wf-recorder -g "$(eval echo $FOCUSED)" -f "$RECORDING"
+    REC=1
+elif [ "$CHOICE" = 'record-stop' ]
+then
+    killall -SIGINT wf-recorder
+    if [ $DUNST ]; then
+        notify-send "Killing screen recorder" -t 2000
+    fi
+    exit
 elif [ -z "$CHOICE" ]
 then
     if [ $DUNST ]; then
@@ -34,10 +63,12 @@ else
     grim -g "$(eval echo $CHOICE)" "$FILENAME"
 fi
 
-
-if [ $DUNST ]; then
-    notify-send "Screenshot" "File saved as $FILENAME\nand copied to clipboard" -t 6000 -i $FILENAME
+if [ $REC ]; then
+    notify-send "Recording" "Recording stopped: $RECORDING" -t 10000
+else
+    if [ $DUNST ]; then
+        notify-send "Screenshot" "File saved as $FILENAME\nand copied to clipboard" -t 6000 -i $FILENAME
+    fi
+    wl-copy < $FILENAME
+    feh $FILENAME
 fi
-wl-copy < $FILENAME
-feh $FILENAME
-
