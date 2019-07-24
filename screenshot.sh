@@ -2,19 +2,23 @@
 
 DUNST=`pidof dunst`
 
-WINDOWS=`swaymsg -t get_tree | jq '.. | (.nodes? // empty)[] | select(.visible and .pid) | .rect | "\(.x),\(.y) \(.width)x\(.height)"'`
-FOCUSED=`swaymsg -t get_tree | jq '.. | (.nodes? // empty)[] | select(.focused and .pid) | .rect | "\(.x),\(.y) \(.width)x\(.height)"'`
+FOCUSED=$(swaymsg -t get_tree | jq '.. | (.nodes? // empty)[] | select(.focused and .pid) | .rect | "\(.x),\(.y) \(.width)x\(.height)"')
+OUTPUTS=$(swaymsg -t get_outputs | jq -r '.[] | select(.active) | .rect | "\(.x),\(.y) \(.width)x\(.height)"')
+WINDOWS=$(swaymsg -t get_tree | jq -r '.. | select(.pid? and .visible?) | .rect | "\(.x),\(.y) \(.width)x\(.height)"')
 
 CHOICE=`dmenu -l 10 -p "How to make a screenshot?" << EOF
 fullscreen
 region
 focused
-$WINDOWS
+select-output
+select-window
+
 record-builtin
 record-external
 record-region
 record-focused
 record-stop
+
 EOF`
 
 
@@ -26,7 +30,13 @@ then
     grim "$FILENAME"
 elif [ "$CHOICE" = region ]
 then
-    grim -g "$(slurp)" "$FILENAME"
+    slurp | grim -g - "$FILENAME"
+elif [ "$CHOICE" = select-output ]
+then
+    echo $OUTPUTS | slurp | grim -g - "$FILENAME"
+elif [ "$CHOICE" = select-window ]
+then
+    echo $WINDOWS | slurp | grim -g - "$FILENAME"
 elif [ "$CHOICE" = focused ]
 then
     grim -g "$(eval echo $FOCUSED)" "$FILENAME"
