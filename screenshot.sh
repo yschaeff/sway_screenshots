@@ -5,6 +5,7 @@ DUNST=`pidof dunst`
 FOCUSED=$(swaymsg -t get_tree | jq '.. | (.nodes? // empty)[] | select(.focused and .pid) | .rect | "\(.x),\(.y) \(.width)x\(.height)"')
 OUTPUTS=$(swaymsg -t get_outputs | jq -r '.[] | select(.active) | .rect | "\(.x),\(.y) \(.width)x\(.height)"')
 WINDOWS=$(swaymsg -t get_tree | jq -r '.. | select(.pid? and .visible?) | .rect | "\(.x),\(.y) \(.width)x\(.height)"')
+RECORDER='/home/yuri/repo/third-party/wf-recorder/build/wf-recorder'
 
 CHOICE=`dmenu -l 10 -p "How to make a screenshot?" << EOF
 fullscreen
@@ -42,19 +43,19 @@ then
     grim -g "$(eval echo $FOCUSED)" "$FILENAME"
 elif [ "$CHOICE" = 'record-builtin' ]
 then
-    /home/yuri/repo/third-party/wf-recorder/build/wf-recorder -o eDP-1 -f "$RECORDING"
+    $RECORDER -o eDP-1 -f "$RECORDING"
     REC=1
 elif [ "$CHOICE" = 'record-external' ]
 then
-    /home/yuri/repo/third-party/wf-recorder/build/wf-recorder -o DP-1 -f "$RECORDING"
+    $RECORDER -o DP-1 -f "$RECORDING"
     REC=1
 elif [ "$CHOICE" = 'record-region' ]
 then
-    /home/yuri/repo/third-party/wf-recorder/build/wf-recorder -g "$(slurp)" -f "$RECORDING"
+    $RECORDER -g "$(slurp)" -f "$RECORDING"
     REC=1
 elif [ "$CHOICE" = 'record-focused' ]
 then
-    /home/yuri/repo/third-party/wf-recorder/build/wf-recorder -g "$(eval echo $FOCUSED)" -f "$RECORDING"
+    $RECORDER -g "$(eval echo $FOCUSED)" -f "$RECORDING"
     REC=1
 elif [ "$CHOICE" = 'record-stop' ]
 then
