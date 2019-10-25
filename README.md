@@ -7,6 +7,8 @@ dependencies:
  - grim
  - slurp
  - jq
+ - wf-recorder
+ - wl-clipboard
 
 Example Sway configuration:
 

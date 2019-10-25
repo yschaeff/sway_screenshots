@@ -23,6 +23,8 @@ record-stop
 EOF`
 
 
+mkdir -p $(xdg-user-dir PICTURES)/screenshots/
+
 FILENAME="$(xdg-user-dir PICTURES)/screenshots/$(date +'%Y-%m-%d-%H%M%S_screenshot.png')"
 RECORDING="$(xdg-user-dir PICTURES)/screenshots/$(date +'%Y-%m-%d-%H%M%S_recording.mp4')"
 
