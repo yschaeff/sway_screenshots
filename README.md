@@ -9,6 +9,8 @@ dependencies:
  - jq
  - wf-recorder
  - wl-clipboard
+ - libnotify-bin
+ - dunst
 
 Example Sway configuration:
 

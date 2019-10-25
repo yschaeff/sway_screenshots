@@ -5,7 +5,7 @@ DUNST=`pidof dunst`
 FOCUSED=$(swaymsg -t get_tree | jq '.. | (.nodes? // empty)[] | select(.focused and .pid) | .rect | "\(.x),\(.y) \(.width)x\(.height)"')
 OUTPUTS=$(swaymsg -t get_outputs | jq -r '.[] | select(.active) | .rect | "\(.x),\(.y) \(.width)x\(.height)"')
 WINDOWS=$(swaymsg -t get_tree | jq -r '.. | select(.pid? and .visible?) | .rect | "\(.x),\(.y) \(.width)x\(.height)"')
-RECORDER='/home/yuri/repo/third-party/wf-recorder/build/wf-recorder'
+RECORDER=wf-recorder
 
 CHOICE=`dmenu -l 10 -p "How to make a screenshot?" << EOF
 fullscreen
