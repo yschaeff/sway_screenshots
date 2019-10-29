@@ -1,5 +1,8 @@
 #!/bin/bash
 
+DMENU="dmenu"
+#DMENU="rofi -dmenu"
+
 DUNST=`pidof dunst`
 
 FOCUSED=$(swaymsg -t get_tree | jq '.. | (.nodes? // empty)[] | select(.focused and .pid) | .rect | "\(.x),\(.y) \(.width)x\(.height)"')
@@ -7,7 +10,7 @@ OUTPUTS=$(swaymsg -t get_outputs | jq -r '.[] | select(.active) | .rect | "\(.x)
 WINDOWS=$(swaymsg -t get_tree | jq -r '.. | select(.pid? and .visible?) | .rect | "\(.x),\(.y) \(.width)x\(.height)"')
 RECORDER=wf-recorder
 
-CHOICE=`dmenu -l 10 -p "How to make a screenshot?" << EOF
+CHOICE=`$DMENU -l 11 -p "How to make a screenshot?" << EOF
 fullscreen
 region
 focused
