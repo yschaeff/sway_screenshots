@@ -1,16 +1,16 @@
 #!/bin/bash
 
-DMENU="dmenu"
-#DMENU="rofi -dmenu"
+#MENU="dmenu"
+MENU="rofi -dmenu"
 
-DUNST=`pidof dunst`
+NOTIFY=$(pidof mako || pidof dunst)
 
 FOCUSED=$(swaymsg -t get_tree | jq '.. | (.nodes? // empty)[] | select(.focused and .pid) | .rect | "\(.x),\(.y) \(.width)x\(.height)"')
 OUTPUTS=$(swaymsg -t get_outputs | jq -r '.[] | select(.active) | .rect | "\(.x),\(.y) \(.width)x\(.height)"')
 WINDOWS=$(swaymsg -t get_tree | jq -r '.. | select(.pid? and .visible?) | .rect | "\(.x),\(.y) \(.width)x\(.height)"')
 RECORDER=wf-recorder
 
-CHOICE=`$DMENU -l 11 -p "How to make a screenshot?" << EOF
+CHOICE=`$MENU -l 11 -p "How to make a screenshot?" << EOF
 fullscreen
 region
 focused
@@ -65,13 +65,13 @@ then
 elif [ "$CHOICE" = 'record-stop' ]
 then
     killall -SIGINT wf-recorder
-    if [ $DUNST ]; then
+    if [ $NOTIFY ]; then
         notify-send "Killing screen recorder" -t 2000
     fi
     exit
 elif [ -z "$CHOICE" ]
 then
-    if [ $DUNST ]; then
+    if [ $NOTIFY ]; then
         notify-send "Screenshot" "Cancelled" -t 1000
     fi
     exit 0
@@ -82,7 +82,7 @@ fi
 if [ $REC ]; then
     notify-send "Recording" "Recording stopped: $RECORDING" -t 10000
 else
-    if [ $DUNST ]; then
+    if [ $NOTIFY ]; then
         notify-send "Screenshot" "File saved as $FILENAME\nand copied to clipboard" -t 6000 -i $FILENAME
     fi
     wl-copy < $FILENAME
