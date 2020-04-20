@@ -14,6 +14,7 @@ WINDOWS=$(swaymsg -t get_tree | jq -r '.. | select(.pid? and .visible?) | .rect 
 REC_PID=$(pidof $RECORDER) || true
 
 notify() {
+    ## if the daemon is not running notify-send will hang indefinitely
     if [ $NOTIFY ]; then
         notify-send "$@"
     else
@@ -43,9 +44,9 @@ record-region
 EOF`
 
 
-mkdir -p $(TARGET)
-FILENAME="$(TARGET)/$(date +'%Y-%m-%d-%H%M%S_screenshot.png')"
-RECORDING="$(TARGET)/$(date +'%Y-%m-%d-%H%M%S_recording.mp4')"
+mkdir -p $TARGET
+FILENAME="$TARGET/$(date +'%Y-%m-%d_%Hh%Mm%Ss_screenshot.png')"
+RECORDING="$TARGET/$(date +'%Y-%m-%d_%Hh%Mm%Ss_recording.mp4')"
 
 case "$CHOICE" in
     "fullscreen")
