@@ -18,4 +18,4 @@ Example Sway configuration:
 
 bindsym Print exec ~/.config/sway/screenshot.sh
 
-![example](dmenu_example.png)
+![example](rofi_example.png)
