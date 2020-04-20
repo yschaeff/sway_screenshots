@@ -24,8 +24,7 @@ record-external
 record-region
 record-focused
 record-stop
-
-EOF`
+EOF` ||  (notify-send "Screenshot" "Cancelled" -t 700 && false)
 
 
 mkdir -p $(xdg-user-dir PICTURES)/screenshots/
@@ -33,53 +32,50 @@ mkdir -p $(xdg-user-dir PICTURES)/screenshots/
 FILENAME="$(xdg-user-dir PICTURES)/screenshots/$(date +'%Y-%m-%d-%H%M%S_screenshot.png')"
 RECORDING="$(xdg-user-dir PICTURES)/screenshots/$(date +'%Y-%m-%d-%H%M%S_recording.mp4')"
 
-if [ "$CHOICE" = fullscreen ]
-then
-    grim "$FILENAME"
-elif [ "$CHOICE" = region ]
-then
-    slurp | grim -g - "$FILENAME"
-elif [ "$CHOICE" = select-output ]
-then
-    echo $OUTPUTS | slurp | grim -g - "$FILENAME"
-elif [ "$CHOICE" = select-window ]
-then
-    echo $WINDOWS | slurp | grim -g - "$FILENAME"
-elif [ "$CHOICE" = focused ]
-then
-    grim -g "$(eval echo $FOCUSED)" "$FILENAME"
-elif [ "$CHOICE" = 'record-builtin' ]
-then
-    $RECORDER -o eDP-1 -f "$RECORDING"
-    REC=1
-elif [ "$CHOICE" = 'record-external' ]
-then
-    $RECORDER -o DP-1 -f "$RECORDING"
-    REC=1
-elif [ "$CHOICE" = 'record-region' ]
-then
-    $RECORDER -g "$(slurp)" -f "$RECORDING"
-    REC=1
-elif [ "$CHOICE" = 'record-focused' ]
-then
-    $RECORDER -g "$(eval echo $FOCUSED)" -f "$RECORDING"
-    REC=1
-elif [ "$CHOICE" = 'record-stop' ]
-then
-    killall -SIGINT wf-recorder
-    if [ $NOTIFY ]; then
-        notify-send "Killing screen recorder" -t 2000
-    fi
-    exit
-elif [ -z "$CHOICE" ]
-then
-    if [ $NOTIFY ]; then
-        notify-send "Screenshot" "Cancelled" -t 1000
-    fi
-    exit 0
-else
-    grim -g "$(eval echo $CHOICE)" "$FILENAME"
-fi
+case "$CHOICE" in
+    "fullscreen")
+        grim "$FILENAME"
+        ;;
+    "region")
+        slurp | grim -g - "$FILENAME"
+        ;;
+    "select-output")
+        echo $OUTPUTS | slurp | grim -g - "$FILENAME"
+        ;;
+    "select-window")
+        echo $WINDOWS | slurp | grim -g - "$FILENAME"
+        ;;
+    "focused")
+        grim -g "$(eval echo $FOCUSED)" "$FILENAME"
+        ;;
+    "record-builtin")
+        $RECORDER -o eDP-1 -f "$RECORDING"
+        REC=1
+        ;;
+    "record-external")
+        $RECORDER -o DP-1 -f "$RECORDING"
+        REC=1
+        ;;
+    "record-region")
+        $RECORDER -g "$(slurp)" -f "$RECORDING"
+        REC=1
+        ;;
+    "record-focused")
+        $RECORDER -g "$(eval echo $FOCUSED)" -f "$RECORDING"
+        REC=1
+        ;;
+    "record-stop")
+        killall -SIGINT wf-recorder
+        if [ $NOTIFY ]; then
+            notify-send "Killing screen recorder" -t 2000
+        fi
+        exit
+        ;;
+    *)
+        grim -g "$(eval echo $CHOICE)" "$FILENAME"
+        ;;
+esac
+
 
 if [ $REC ]; then
     notify-send "Recording" "Recording stopped: $RECORDING" -t 10000
