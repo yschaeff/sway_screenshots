@@ -1,16 +1,18 @@
-This script opens dmenu and presents the user with some screenshot options.
+This script opens dmenu/rofi and presents the user with some screenshot options.
 On selection it saves the screenshot in the ~/Pictures directory. Copies the 
 image to the clipboard and opens it in feh.
+It can also be used to make screen recordings.
 
 dependencies:
  - feh
  - grim
  - slurp
+ - dmenu or rofi
  - jq
  - wf-recorder
  - wl-clipboard
  - libnotify-bin
- - dunst
+ - dunst or mako
 
 Example Sway configuration:
 

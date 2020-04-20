@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 #MENU="dmenu"
 MENU="rofi -dmenu"
 
