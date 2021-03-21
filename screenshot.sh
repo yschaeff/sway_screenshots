@@ -6,7 +6,7 @@ set -e
 MENU="rofi -dmenu -u 6,7,8,9"
 RECORDER=wf-recorder
 TARGET=$(xdg-user-dir PICTURES)/screenshots
-
+TARGET_VIDEOS=$(xdg-user-dir VIDEOS)/recordings
 NOTIFY=$(pidof mako || pidof dunst) || true
 FOCUSED=$(swaymsg -t get_tree | jq '.. | ((.nodes? + .floating_nodes?) // empty) | .[] | select(.focused and .pid) | .rect | "\(.x),\(.y) \(.width)x\(.height)"')
 OUTPUTS=$(swaymsg -t get_outputs | jq -r '.[] | select(.active) | .rect | "\(.x),\(.y) \(.width)x\(.height)"')
@@ -45,8 +45,9 @@ EOF`
 
 
 mkdir -p $TARGET
+mkdir -p $TARGET_VIDEOS
 FILENAME="$TARGET/$(date +'%Y-%m-%d_%Hh%Mm%Ss_screenshot.png')"
-RECORDING="$TARGET/$(date +'%Y-%m-%d_%Hh%Mm%Ss_recording.mp4')"
+RECORDING="$TARGET_VIDEOS/$(date +'%Y-%m-%d_%Hh%Mm%Ss_recording.mp4')"
 
 case "$CHOICE" in
     "Fullscreen")
