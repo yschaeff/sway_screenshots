@@ -6,7 +6,7 @@ set -e
 MENU="rofi -dmenu -u 6,7,8,9"
 RECORDER=wf-recorder
 TARGET=$(xdg-user-dir PICTURES)/screenshots
-
+TARGET_VIDEOS=$(xdg-user-dir VIDEOS)/recordings
 NOTIFY=$(pidof mako || pidof dunst) || true
 FOCUSED=$(swaymsg -t get_tree | jq '.. | ((.nodes? + .floating_nodes?) // empty) | .[] | select(.focused and .pid) | .rect | "\(.x),\(.y) \(.width)x\(.height)"')
 OUTPUTS=$(swaymsg -t get_outputs | jq -r '.[] | select(.active) | .rect | "\(.x),\(.y) \(.width)x\(.height)"')
@@ -31,44 +31,46 @@ if [ ! -z $REC_PID ]; then
 fi
 
 CHOICE=`$MENU -l 10 -p "How to make a screenshot?" << EOF
-fullscreen
-focused
-select-window
-select-output
-region
+Fullscreen
+Focused
+Select-window
+Select-output
+Region
 
-record-focused
-record-select-window
-record-select-output
-record-region
+Record-focused
+Record-select-window
+Record-select-output
+Record-region
 EOF`
 
 
 mkdir -p $TARGET
+mkdir -p $TARGET_VIDEOS
 FILENAME="$TARGET/$(date +'%Y-%m-%d_%Hh%Mm%Ss_screenshot.png')"
-RECORDING="$TARGET/$(date +'%Y-%m-%d_%Hh%Mm%Ss_recording.mp4')"
+RECORDING="$TARGET_VIDEOS/$(date +'%Y-%m-%d_%Hh%Mm%Ss_recording.mp4')"
 
 case "$CHOICE" in
-    "fullscreen")
+    "Fullscreen")
         grim "$FILENAME" ;;
-    "region")
+    "Region")
         slurp | grim -g - "$FILENAME" ;;
-    "select-output")
+    "Select-output")
         echo "$OUTPUTS" | slurp | grim -g - "$FILENAME" ;;
-    "select-window")
+    "Select-window")
         echo "$WINDOWS" | slurp | grim -g - "$FILENAME" ;;
-    "focused")
+    "Focused")
         grim -g "$(eval echo $FOCUSED)" "$FILENAME" ;;
-    "record-select-output")
+    "Record-select-output")
         $RECORDER -g "$(echo "$OUTPUTS"|slurp)" -f "$RECORDING"
         REC=1 ;;
-    "record-select-window")
+    "Record-select-window")
         $RECORDER -g "$(echo "$WINDOWS"|slurp)" -f "$RECORDING"
-        REC=1 ;;
-    "record-region")
+      
+      REC=1 ;;
+    "Record-region")
         $RECORDER -g "$(slurp)" -f "$RECORDING"
         REC=1 ;;
-    "record-focused")
+    "Record-focused")
         $RECORDER -g "$(eval echo $FOCUSED)" -f "$RECORDING"
         REC=1 ;;
     *)
