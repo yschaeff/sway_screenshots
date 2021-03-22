@@ -1,7 +1,10 @@
-This script opens dmenu/rofi and presents the user with some screenshot options.
-On selection it saves the screenshot in the ~/Pictures directory. Copies the 
-image to the clipboard and opens it in feh.
-It can also be used to make screen recordings.
+This script opens dmenu/rofi and presents the user with some screenshot
+options.  On selection it saves the screenshot in the ~/Pictures directory (or
+whatever is defined by XDG). It then copies the image to the clipboard and opens it in
+feh.
+
+It can also be used to make screen recordings. Running the script a second
+time will stop any current recording.
 
 dependencies:
  - feh
