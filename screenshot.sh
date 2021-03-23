@@ -3,7 +3,7 @@ set -e
 
 ## USER PREFERENCES ##
 #MENU="dmenu"
-MENU="rofi -dmenu -u 6,7,8,9"
+MENU="rofi -i -dmenu -u 6,7,8,9"
 RECORDER=wf-recorder
 TARGET=$(xdg-user-dir PICTURES)/screenshots
 TARGET_VIDEOS=$(xdg-user-dir VIDEOS)/recordings
